@@ -3,9 +3,26 @@ import re
 import sys
 
 # Regex patterns
-# NO_PATTERN = re.compile(r'No\. (\d+)')
 NO_PATTERN = re.compile(r'No\. ((?:\d+[A-Za-z]?)(?:\s*[&-]\s*\d+[A-Za-z]?)*)')
 H1_PATTERN = re.compile(r'^# (.+)', re.MULTILINE)
+
+
+def extrano_file(filepath):
+    with open(filepath, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+
+    updated_lines = []
+    for line in lines:
+        no_match = NO_PATTERN.search(line)
+        if not no_match:
+            updated_lines.append(line)
+
+    if len(updated_lines) < len(lines):  # Check if any lines were removed
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.writelines(updated_lines)
+        
+        print(f"Updated: {filepath}")
+
 
 
 def process_markdown_file(filepath):
@@ -51,6 +68,7 @@ def process_directory(directory):
             if file.endswith(".md"):
                 filepath = os.path.join(root, file)
                 process_markdown_file(filepath)
+                extrano_file(filepath)
 
 
 if __name__ == "__main__":
