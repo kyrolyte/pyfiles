@@ -67,7 +67,7 @@ def process_directory(directory):
         for file in files:
             if file.endswith(".md"):
                 filepath = os.path.join(root, file)
-                process_markdown_file(filepath)
+                # process_markdown_file(filepath)
                 extrano_file(filepath)
 
 
