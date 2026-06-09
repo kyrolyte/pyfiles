@@ -20,10 +20,10 @@ def number_to_ordinal_word(n: int) -> str:
 
     ones = ["", "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth",
             "tenth", "eleventh", "twelfth", "thirteenth", "fourteenth", "fifteenth", "sixteenth",
-            "seventeenth", "eighteenth", "nineteenth"]
+            "seventeenth", "eighteenth", "nineteenth", "twentieth"]
     tens_base = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"]
     tens_ord = ["", "", "twentieth", "thirtieth", "fortieth", "fiftieth", "sixtieth", "seventieth", "eightieth", "ninetieth"]
-
+    
     if n <= 20:
         return ones[n]
     elif n < 100:
