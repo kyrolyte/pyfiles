@@ -9,6 +9,7 @@ Usage:
 import sys
 import os
 import subprocess
+import json
 
 
 def run_vale_on_file(filepath: str, output_path: str) -> None:
@@ -19,13 +20,22 @@ def run_vale_on_file(filepath: str, output_path: str) -> None:
         text=True,
         check=False,
     )
-    # If there is no output, skip writing the JSON file
-    if not result.stdout.strip():
-        print(f"  No output from vale for {os.path.basename(filepath)}; skipping JSON file.")
+
+    # Vale may return an empty JSON object when there are no errors.
+    # We skip writing a file in that case.
+    output = result.stdout.strip()
+    if not output or output == "{}":
+        # If there was stderr, show it for debugging.
+        if result.stderr:
+            print(f"  [stderr] {result.stderr.strip()}")
+        # No output errors – skip writing a JSON file.
+        print(f"  [info] No errors reported – skipping JSON file.")
         return
+
     # Write JSON output to file (stdout is JSON)
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(result.stdout)
+
     # If there was stderr, include it in the output for debugging
     if result.stderr:
         print(f"  [stderr] {result.stderr.strip()}")
