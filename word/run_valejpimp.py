@@ -9,7 +9,6 @@ Usage:
 import sys
 import os
 import subprocess
-import json
 
 
 def run_vale_on_file(filepath: str, output_path: str) -> None:
@@ -20,6 +19,10 @@ def run_vale_on_file(filepath: str, output_path: str) -> None:
         text=True,
         check=False,
     )
+    # If there is no output, skip writing the JSON file
+    if not result.stdout.strip():
+        print(f"  No output from vale for {os.path.basename(filepath)}; skipping JSON file.")
+        return
     # Write JSON output to file (stdout is JSON)
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(result.stdout)
@@ -66,3 +69,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
