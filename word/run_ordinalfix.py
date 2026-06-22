@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-scriptmd.py
-Iterates through .md files in a specified directory and replaces ordinal numbers
-(1st, 2nd, ..., 200th) with their fully spelled-out English equivalents.
-"""
 
 import sys
 import re
@@ -11,10 +6,6 @@ from pathlib import Path
 
 
 def number_to_ordinal_word(n: int) -> str:
-    """
-    Converts an integer (1-200) to its fully spelled-out ordinal word.
-    Uses standard English phrasing (e.g., 21st -> twenty-first, 101st -> one hundred and first).
-    """
     if n < 1 or n > 200:
         return None
 
@@ -23,7 +14,7 @@ def number_to_ordinal_word(n: int) -> str:
             "seventeenth", "eighteenth", "nineteenth", "twentieth"]
     tens_base = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"]
     tens_ord = ["", "", "twentieth", "thirtieth", "fortieth", "fiftieth", "sixtieth", "seventieth", "eightieth", "ninetieth"]
-    
+
     if n <= 20:
         return ones[n]
     elif n < 100:
@@ -36,16 +27,15 @@ def number_to_ordinal_word(n: int) -> str:
         return "one hundredth"
     elif n < 200:
         return f"one hundred and {number_to_ordinal_word(n - 100)}"
-    else:  # n == 200
+    else:
         return "two hundredth"
 
 
 def replace_ordinal(match: re.Match) -> str:
-    """Callback for re.subn to replace ordinal numbers with words."""
     num = int(match.group(1))
     if 1 <= num <= 200:
         return number_to_ordinal_word(num)
-    return match.group(0)  # Return original if out of range
+    return match.group(0)
 
 
 def process_directory(dir_path: str) -> None:
@@ -58,12 +48,9 @@ def process_directory(dir_path: str) -> None:
         print(f"❌ Error: '{target_dir}' is not a directory.")
         sys.exit(1)
 
-    # Matches digits followed by st/nd/rd/th (case-insensitive)
     pattern = re.compile(r'\b(\d+)(?:st|nd|rd|th)\b', re.IGNORECASE)
-
     total_replacements = 0
 
-    # Iterate through .md files in the specified directory
     for md_file in target_dir.glob('*.md'):
         try:
             content = md_file.read_text(encoding='utf-8')
