@@ -1,10 +1,4 @@
 #!/usr/bin/env python3
-"""
-CLI tool to export Vale lint annotations to a CSV file.
-
-Usage:
-    python run_autovale.py /path/to/dir
-"""
 
 import json
 import os
@@ -12,7 +6,6 @@ import sys
 import csv
 
 def read_file(path: str) -> str:
-    """Read and return the contents of a file."""
     try:
         with open(path, "r", encoding="utf-8") as f:
             return f.read()
@@ -46,20 +39,16 @@ def main():
 
             for json_file in json_files:
                 json_path = os.path.join(directory, json_file)
-                
+
                 with open(json_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
 
-                # In Vale JSON, the keys are the filenames of the documents being linted.
                 for node_key, entries in data.items():
                     if not isinstance(entries, list):
                         continue
 
-                    # We try to find the markdown file.
-                    # 1. Try using node_key (the filename from Vale)
                     md_path = os.path.join(directory, node_key)
-                    
-                    # 2. If not found, try replacing .json with .md (as done in run_comparevale.py)
+
                     if not os.path.isfile(md_path):
                         md_filename = json_file.replace(".json", ".md")
                         md_path = os.path.join(directory, md_filename)
@@ -81,7 +70,6 @@ def main():
                         if line_num is None or span is None:
                             continue
 
-                        # Get context (the line)
                         line_idx = line_num - 1
                         if 0 <= line_idx < len(lines):
                             context = lines[line_idx]
@@ -106,3 +94,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
