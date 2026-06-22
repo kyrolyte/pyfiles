@@ -1,11 +1,4 @@
 #!/usr/bin/env python3
-"""
-Run vale linter on all markdown files in a directory and save JSON output to files.
-
-Usage:
-    python vale_json_report.py /path/to/dir
-"""
-
 import sys
 import os
 import subprocess
@@ -13,7 +6,6 @@ import json
 
 
 def run_vale_on_file(filepath: str, output_path: str) -> None:
-    """Run vale on a single markdown file and save JSON output."""
     result = subprocess.run(
         ["vale", filepath, "--output=JSON"],
         capture_output=True,
@@ -21,22 +13,16 @@ def run_vale_on_file(filepath: str, output_path: str) -> None:
         check=False,
     )
 
-    # Vale may return an empty JSON object when there are no errors.
-    # We skip writing a file in that case.
     output = result.stdout.strip()
     if not output or output == "{}":
-        # If there was stderr, show it for debugging.
         if result.stderr:
             print(f"  [stderr] {result.stderr.strip()}")
-        # No output errors – skip writing a JSON file.
         print(f"  [info] No errors reported – skipping JSON file.")
         return
 
-    # Write JSON output to file (stdout is JSON)
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(result.stdout)
 
-    # If there was stderr, include it in the output for debugging
     if result.stderr:
         print(f"  [stderr] {result.stderr.strip()}")
 
@@ -52,7 +38,6 @@ def main():
         print(f"Error: '{target_dir}' is not a valid directory.")
         sys.exit(1)
 
-    # Find all .md files in the directory
     md_files = sorted(
         f for f in os.listdir(target_dir) if f.lower().endswith(".md")
     )
