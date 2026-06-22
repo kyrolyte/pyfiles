@@ -1,11 +1,4 @@
 #!/usr/bin/env python3
-"""
-CLI tool to review and edit markdown files based on JSON lint annotations.
-
-Usage:
-    python script.py /path/to/dir
-"""
-
 import json
 import os
 import sys
@@ -13,36 +6,30 @@ import subprocess
 
 
 def run_command(cmd: str) -> str:
-    """Run a shell command and return stdout."""
     result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     return result.stdout.strip()
 
 
 def read_file(path: str) -> str:
-    """Read and return the contents of a file."""
     with open(path, "r", encoding="utf-8") as f:
         return f.read()
 
 
 def write_file(path: str, content: str):
-    """Write content to a file."""
     with open(path, "w", encoding="utf-8") as f:
         f.write(content)
 
 
 def apply_changes(markdown_path: str, line_num: int, span: list, match_str: str, action: str, md_filename: str = ""):
-    """Apply the selected change to the markdown file."""
     content = read_file(markdown_path)
     lines = content.split("\n")
 
-    # line_num is 1-indexed (from JSON), convert to 0-indexed for list access
     line_idx = line_num - 1
     if line_idx >= len(lines) or line_idx < 0:
         print("  -> Line number out of range, skipping.")
         return
 
     original_line = lines[line_idx]
-    # Span is 1-indexed (for cut), convert to 0-indexed Python slice
     start = span[0] - 1
     end = span[1]
     current = original_line[start:end]
@@ -87,16 +74,13 @@ def main():
         md_filename = json_file.replace(".json", ".md")
         md_path = os.path.join(directory, md_filename)
 
-        # Read JSON
         with open(json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        # The primary node is the key in the JSON object (e.g., "sample.md")
         for node_key, entries in data.items():
             if not isinstance(entries, list):
                 continue
 
-            # Check if the markdown file exists
             if not os.path.isfile(md_path):
                 print(f"Warning: No matching markdown file for '{node_key}' -> '{md_filename}'")
                 continue
@@ -115,27 +99,23 @@ def main():
                 if line is None or span is None:
                     continue
 
-                line_num = line  # 1-indexed line number from JSON
+                line_num = line
 
-                # Print current string using sed and cut
                 print(f"\nCurrent string:")
                 cmd = f"sed -n '{line_num}p' '{md_path}' | cut -c{span[0]}-{span[1]}"
                 current_str = run_command(cmd)
                 print(f"  {current_str}")
 
-                # Print context
                 print(f"\nContext of match:")
                 cmd = f"sed -n '{line_num}p' '{md_path}'"
                 context = run_command(cmd)
                 print(f"  {context}")
 
-                # Show metadata
                 if description:
                     print(f"\n  Description: {description}")
                 if message:
                     print(f"  Message: {message}")
 
-                # Prompt user
                 print("\n  Options:")
                 print("  0: Do nothing, go to the next value")
                 print("  1: Convert the matching string to lowercase in the file")
@@ -150,7 +130,6 @@ def main():
                 elif choice in ("0", "1", "2"):
                     if choice in ("1", "2"):
                         apply_changes(md_path, line_num, span, match_str, choice, md_filename)
-                    # If 0, just continue to next entry
                 else:
                     confirm = input("\n  Invalid input. Continue? (y/n): ").strip().lower()
                     if confirm != "y":
@@ -162,3 +141,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
