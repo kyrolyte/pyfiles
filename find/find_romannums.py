@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Script to detect Roman numerals in markdown files within a user-specified directory.
-Roman numerals are detected as sequences of I, V, X, L, C, D, M (case-insensitive).
+Roman numerals are detected as sequences of I, V, X, L (capital formats only).
 The script outputs findings to a markdown file with file name, line number, position,
 and context around the match.
 """
@@ -25,18 +25,18 @@ def find_markdown_files(directory):
 def find_roman_numerals(content):
     """
     Find all Roman numeral occurrences in the content.
-    Roman numerals consist of I, V, X, L, C, D, M (case-insensitive).
-    We look for sequences of at least one Roman numeral character.
+    Roman numerals consist of I, V, X, L (capital formats only).
+    We look for sequences of at least two Roman numeral characters, or single characters (with 'I' requiring a following dot).
     
     Returns a list of tuples: (start_position, end_position, matched_string)
     where start_position is the character index in the line.
     """
-    # Pattern for Roman numerals: one or more of I, V, X, L, C, D, M (case-insensitive)
+    # Pattern for Roman numerals: sequences of 2+ characters, single V, X, L, or 'I' if followed by a dot.
     # We need to be careful not to match things like "IIII" which aren't valid,
     # but for detection purposes, we'll just find all sequences of Roman numeral chars.
     # The problem states to find all occurrences, so we'll capture any sequence of
     # Roman numeral characters.
-    pattern = re.compile(r'[IVXLCDMivxlcdm]+')
+    pattern = re.compile(r'\b([IVXL]{2,}|[VXL]|I(?=\.))\b')
     return pattern.findall(content)
 
 
@@ -45,7 +45,7 @@ def find_roman_numeral_positions_in_line(line):
     Find all Roman numeral occurrences in a single line.
     Returns a list of tuples: (start_position, matched_string)
     """
-    pattern = re.compile(r'[IVXLCDMivxlcdm]+')
+    pattern = re.compile(r'\b([IVXL]{2,}|[VXL]|I(?=\.))\b')
     matches = []
     for match in pattern.finditer(line):
         matches.append((match.start(), match.group()))
