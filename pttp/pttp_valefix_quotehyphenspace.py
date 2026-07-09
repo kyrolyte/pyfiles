@@ -1,4 +1,3 @@
---- File: run_quotehyphenfix.py ---
 import json
 import os
 import re
