@@ -27,6 +27,8 @@ def process_markdown_files():
                                 with open(filename, 'w', encoding='utf-8') as f:
                                     f.writelines(lines)
                                 
+                                print(f"Edited: {filename}")
+                                
                     except Exception:
                         pass
 
