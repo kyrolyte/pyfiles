@@ -133,7 +133,7 @@ def main():
             else:
                 updated_lines.append(line)
         
-        new_md_filename = md_path.replace("_results.md", "_results_new.md")
+        new_md_filename = md_path.replace("_results.md", "_updates.md")
         new_md_path = os.path.join(os.path.dirname(md_path), new_md_filename)
 
         write_file(new_md_path, "\n".join(updated_lines))
