@@ -240,10 +240,8 @@ def main():
                 item_text = line[2:]
                 
                 try:
-                    print(f"Current Text: '{item_text}'")
-                    current_prompt = f"Update the provided text to adhere to English capitalization rules: keep capital letters if part of Roman Numerals or a title or it is a single O; lowercase the rest; capitalize only the first letter of sentences, and the first letter of proper nouns (persons, places, things of importance), for example LORD should be Lord; SPIRIT OF GOD should be Spirit of God; if a word only has the first letter capitalized, leave it as-is. Output only the resulting text string on a single line. Do not include any preamble, explanation, commentary, or any other text whatsoever. The provided text is here:\n{item_text}"
                     result = subprocess.run(
-                        ["pi", "-p", current_prompt],
+                        ["pi", "-p", f"Update the provided text to adhere to English capitalization rules: keep capital letters if part of Roman Numerals or a title; lowercase the rest; capitalize only the first letter of sentences, and the first letter of proper nouns (persons, places, things of importance); if a word only has the first letter capitalized, leave it as-is. Output only the resulting text string on a single line. Do not include any preamble, explanation, commentary, or any other text whatsoever."],
                         input=item_text,
                         capture_output=True,
                         text=True,
